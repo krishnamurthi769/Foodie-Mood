@@ -3,13 +3,19 @@ import { Heart, MessageCircle, Send, MoreHorizontal, ShoppingBag, Music, X, Minu
 import { motion, AnimatePresence } from 'framer-motion';
 
 // --- 1. DATA (Simulating Database) ---
+// Import Videos
+import reel1 from './assets/videos/reel_01.mp4';
+import reel2 from './assets/videos/reel_02.mp4';
+import reel3 from './assets/videos/reel_03.mp4';
+
+// --- 1. DATA (Simulating Database) ---
 const REELS_DATA = [
   {
     id: 1,
     username: "burger_king_fan",
     avatar: "https://i.pravatar.cc/100?img=12",
     description: "Juiciest burger in town! 🍔 #foodie #cheatday",
-    videoUrl: "/videos/reel_01.mp4", // Local video
+    videoUrl: reel1, // Local video
     likes: "12.4K",
     isFood: true,
     product: { name: "Double Cheese Burger", price: 350, restaurant: "Burger King", rating: "4.5", time: "30 mins" }
@@ -19,7 +25,7 @@ const REELS_DATA = [
     username: "travel_diaries",
     avatar: "https://i.pravatar.cc/100?img=20",
     description: "Peaceful vibes in Bali 🌊 #travel #nature",
-    videoUrl: "/videos/reel_02.mp4", // Nature (NOT Food)
+    videoUrl: reel2, // Nature (NOT Food)
     likes: "8.2K",
     isFood: false, // This will be HIDDEN in Foodie Mode
     product: null
@@ -29,7 +35,7 @@ const REELS_DATA = [
     username: "pizza_lover",
     avatar: "https://i.pravatar.cc/100?img=33",
     description: "Wood fired perfection 🍕 #pizza #italian",
-    videoUrl: "/videos/reel_03.mp4", // Food
+    videoUrl: reel3, // Food
     likes: "45K",
     isFood: true,
     product: { name: "Pepperoni Pizza", price: 550, restaurant: "Pizza Hut", rating: "4.2", time: "45 mins" }
