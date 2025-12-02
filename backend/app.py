@@ -7,8 +7,6 @@ import random
 app = Flask(__name__)
 CORS(app)
 
-# Mock Data (In-memory storage since we might not have a live DB connection immediately)
-# In a real scenario, we would connect to Postgres using psycopg2
 MOCK_REELS = [
     {
         "id": 1,
@@ -121,5 +119,6 @@ def add_to_cart():
     else:
         return jsonify({"success": False, "message": "Product not found"}), 404
 
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
