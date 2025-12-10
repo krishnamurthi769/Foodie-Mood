@@ -1,46 +1,11 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import { Heart, MessageCircle, Send, MoreHorizontal, ShoppingBag, Music, X, Minus, Plus, Check, Utensils } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// --- 1. DATA (Simulating Database) ---
-// Import Videos
-import reel1 from './assets/videos/reel_01.mp4';
-import reel2 from './assets/videos/reel_02.mp4';
-import reel3 from './assets/videos/reel_03.mp4';
+// --- API CONFIGURATION ---
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
 
-// --- 1. DATA (Simulating Database) ---
-const REELS_DATA = [
-  {
-    id: 1,
-    username: "burger_king_fan",
-    avatar: "https://i.pravatar.cc/100?img=12",
-    description: "Juiciest burger in town! 🍔 #foodie #cheatday",
-    videoUrl: reel1, // Local video
-    likes: "12.4K",
-    isFood: true,
-    product: { name: "Double Cheese Burger", price: 350, restaurant: "Burger King", rating: "4.5", time: "30 mins" }
-  },
-  {
-    id: 2,
-    username: "travel_diaries",
-    avatar: "https://i.pravatar.cc/100?img=20",
-    description: "Peaceful vibes in Bali 🌊 #travel #nature",
-    videoUrl: reel2, // Nature (NOT Food)
-    likes: "8.2K",
-    isFood: false, // This will be HIDDEN in Foodie Mode
-    product: null
-  },
-  {
-    id: 3,
-    username: "pizza_lover",
-    avatar: "https://i.pravatar.cc/100?img=33",
-    description: "Wood fired perfection 🍕 #pizza #italian",
-    videoUrl: reel3, // Food
-    likes: "45K",
-    isFood: true,
-    product: { name: "Pepperoni Pizza", price: 550, restaurant: "Pizza Hut", rating: "4.2", time: "45 mins" }
-  }
-];
 
 // --- 2. BOTTOM SHEET COMPONENT (Dynamic Branding) ---
 const BottomSheet = ({ product, platform, onClose }) => {
@@ -267,7 +232,46 @@ const ReelItem = ({ data, isFoodieMode }) => {
 // --- 4. MAIN APP ---
 export default function FoodieModeApp() {
   const [isFoodieMode, setIsFoodieMode] = useState(false);
-  const displayReels = isFoodieMode ? REELS_DATA.filter(reel => reel.isFood) : REELS_DATA;
+  const [reels, setReels] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  React.useEffect(() => {
+    fetchReels();
+  }, [isFoodieMode]);
+
+  const fetchReels = async () => {
+    try {
+      setLoading(true);
+      const mode = isFoodieMode ? 'foodie' : 'normal';
+      const response = await axios.get(`${API_URL}/api/feed?mode=${mode}`);
+
+      // Transform Backend Data (snake_case) to Frontend Component (camelCase)
+      const formattedReels = response.data.map(item => ({
+        id: item.id,
+        username: item.username,
+        avatar: item.avatar_url,
+        description: item.description,
+        videoUrl: item.video_url,
+        likes: item.likes_count, // You might want to format this (e.g., 1200 -> 1.2K) if needed
+        isFood: item.is_food_content,
+        product: item.product ? {
+          name: item.product.item_name,
+          price: item.product.price,
+          restaurant: item.product.restaurant_name,
+          rating: item.product.rating,
+          time: `${item.product.delivery_time_min} mins`
+        } : null
+      }));
+
+      setReels(formattedReels);
+    } catch (error) {
+      console.error("Failed to fetch reels:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const displayReels = reels;
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-900 py-4 font-sans">
